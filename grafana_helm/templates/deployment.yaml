@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.stage }}-{{ .Values.app_deployment.full_name }}
+  namespace: {{ .Values.oc_project }}
+  labels:
+    {{- include "deployment.labels" . | nindent 6 }}
+spec:
+  replicas: {{ .Values.app_deployment.replicas }}
+  selector:
+    matchLabels:
+      {{- include "service.pointer" . | nindent 8 }}
+  template:
+    metadata:
+      labels:
+        {{- include "service.pointer" . | nindent 8 }}
+    spec:
+      containers:
+      - image: {{ .Values.app_deployment.repo_name }}/{{ .Values.app_deployment.image_name }}:{{ .Values.app_deployment.tag }}
+        name: grafana
+        resources:
+          requests:
+            cpu: 250m
+            memory: 400Mi
+          limits:
+            cpu: {{ .Values.app_deployment.resources.max_cpu }}
+            memory: {{ .Values.app_deployment.resources.max_memory }}
+        ports:
+          - name: grafana-port
+            containerPort: 3000
+            protocol: TCP
+        volumeMounts:
+          - mountPath: /volumes
+            name: grafana-data-storage
+            subPath: grafana
+          - mountPath: /var/lib
+            name: grafana-data-storage
+          - mountPath: /var/log
+            name: grafana-data-storage
+          # - mountPath: /usr/share/grafana
+          #   name: grafana-data
+          # - mountPath: /etc/grafana
+          #   name: grafana-data
+      volumes:
+      - name: grafana-data-storage
+        persistentVolumeClaim:
+            claimName: {{ .Values.app_deployment.grafana_storage }}-{{ .Values.stage }}

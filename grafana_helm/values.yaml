@@ -1,0 +1,37 @@
+## Note
+## This helm chart will not will node deploy the
+## PVC (disk) in any environment except 
+## test or testing release
+
+## ex. grafana-disk-{stage-value}
+## grafana-disk-uat
+
+oc_project: pbbsa-sbsa-dev
+stage: uat
+app_deployment:
+    full_name: grafana
+    grafana_storage: grafana-disk
+    grafana_storage_size: "5Gi"
+
+    replicas: 1
+
+    repo_name: grafana
+    image_name: grafana
+    tag: latest
+    common_labels:
+      app: grafana
+      author: percy
+      owner: tracy
+      project: SAP
+
+    # resources:
+    #   max_cpu: 1
+    #   max_memory: 2048Mi
+
+
+    resources:
+      max_cpu: 500m
+      max_memory: 900Mi
+
+## Installation command
+## helm upgrade --install uat-grafana .

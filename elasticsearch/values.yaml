@@ -1,0 +1,12 @@
+# Default values for elasticsearch.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+elastic:
+  name: dev-elastic
+  replicaCount: 1
+  namespace: elastic
+  storage: 30Gi
+
+kibana:
+  replicaCount: 1

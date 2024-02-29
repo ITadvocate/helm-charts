@@ -1,0 +1,15 @@
+{{- if eq .Values.stage "test" "testing" "nonprod" }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: 
+  name: {{ .Values.app_deployment.grafana_storage }}-{{ .Values.stage }}
+  namespace: {{ .Values.oc_project }}
+spec: 
+  accessModes: 
+    - ReadWriteOnce
+  resources: 
+    requests: 
+      storage:  {{ .Values.app_deployment.grafana_storage_size }}
+  storageClassName: gp2
+
+  {{- end -}}

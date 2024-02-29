@@ -1,0 +1,14 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+  {{- include "deployment.labels" . | nindent 6 }}
+  name: {{ .Values.stage }}-{{ .Values.app_deployment.full_name }}-route
+  namespace: {{ .Values.oc_project }}
+spec:
+  host: {{ .Values.app_deployment.full_name }}-{{ .Values.oc_project }}.apps.rosanonprod.h01e.p1.openshiftapps.com
+  port:
+    targetPort: 3000
+  to:
+    kind: Service
+    name: {{ .Values.stage }}-{{ .Values.app_deployment.full_name }}-svc

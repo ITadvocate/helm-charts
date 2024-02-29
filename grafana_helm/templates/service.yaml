@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.stage }}-{{ .Values.app_deployment.full_name }}-svc
+  labels:
+    {{- include "deployment.labels" . | nindent 6 }}
+  namespace: {{ .Values.oc_project }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "service.pointer" . | nindent 8 }}

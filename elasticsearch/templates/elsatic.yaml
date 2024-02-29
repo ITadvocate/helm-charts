@@ -1,0 +1,37 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: {{ .Values.elastic.name }}
+  namespace: {{ .Values.elastic.namespace }}
+spec:
+  version: 8.12.1
+  nodeSets:
+  - name: default
+    count: {{ .Values.elastic.replicaCount }}
+    podTemplate:
+      spec:
+        containers:
+          - name: elasticsearch
+            env:
+              - name: ES_JAVA_OPTS
+                value: -Xms4g -Xmx4g
+            resources:
+              requests:
+                memory: 1Gi
+                cpu: 0.5
+              limits:
+                cpu: 4
+                memory: 4Gi
+    volumeClaimTemplates:
+      - metadata:
+          name: elasticsearch-data
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: {{ .Values.elastic.storage}}
+          storageClassName: standard
+    config:
+      # node.roles: [ "master", "data" ]
+      node.store.allow_mmap: false
